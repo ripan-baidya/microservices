@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// Note: While working with dto's in spring boot, make sure do not write any business logic inside dto's.
+// Note: While working with dto's in spring boot, make sure do not write any business logic inside it.
 // Serialization logic you can write if required. We can use "record" for dto's instead of class.
 // for "class" based dto's,
 // required - private fields, getters, setters, no-args constructor(jackson requirement), validation annotation

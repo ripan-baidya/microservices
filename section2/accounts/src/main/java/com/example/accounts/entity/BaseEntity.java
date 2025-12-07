@@ -14,24 +14,25 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-// The @MappedSuperclass annotation indicates that this class is a superclass; it contains some common
+// The @MappedSuperclass annotation indicates that this class is a superclass; it contains common
 // properties, which might be used by other entities in the application.
 @MappedSuperclass
 // Specifies the callback listener classes to be used for an entity or mapped superclass.
 // This annotation may be applied to an entity class or mapped superclass.
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter @ToString
+@Getter @Setter
 public class BaseEntity {
 
     // Note: updatable = false
-    // It tells JPA that once the value is set during the initial insert, it should not be modified during subsequent updates.
-    // This is typically used for fields like createdAt and createdBy, which should remain constant
+    // It tells JPA that once the value is set during the initial insert, it should not be modified
+    // duringsubsequent updates. This is typically used for fields like createdAt and createdBy,
+    // which should remain constant
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // Declares a field as the one representing the principal that created the entity containing the field.
-    // We need to use @EnableJpaAuditing annotation to enable this feature.
+    // Declares a field as the one representing the principal that created the entity containing the
+    // field. We need to use @EnableJpaAuditing annotation to enable this feature.
     @CreatedBy
     @Column(name = "created_by", updatable = false)
     private String createdBy;
@@ -46,5 +47,4 @@ public class BaseEntity {
     @LastModifiedBy
     @Column(name = "updated_by", insertable = false)
     private String updatedBy;
-
 }

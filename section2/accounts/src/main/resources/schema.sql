@@ -1,4 +1,4 @@
--- Whenever we want to create a table or want to alter a table, we need to create a schema.sql file
+-- Whenever we want to create or alter a table, we need to create a schema.sql file
 -- This file will be executed whenever the application is started
 
 CREATE TABLE IF NOT EXISTS `customers` (
@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS `customers` (
 );
 
 CREATE TABLE IF NOT EXISTS `accounts` (
+    -- currently we never did any mapping between accounts and customers, but here the customer_id
+    -- in the "accounts" table is work as a foreign key
     `customer_id` int NOT NULL,
     `account_number` int AUTO_INCREMENT  PRIMARY KEY,
     `account_type` varchar(100) NOT NULL,

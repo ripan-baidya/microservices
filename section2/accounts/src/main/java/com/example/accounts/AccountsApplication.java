@@ -11,28 +11,29 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
-// Here, we are defining the OpenAPI documentation for the Accounts microservice
-// For production we should write all the config in the separate config file.
-// But development demo purpose, we are writing it here directly.
+// Configures OpenAPI documentation for the Accounts microservice.
+// Note: In production environments, OpenAPI configuration should be externalized to a separate configuration
+// class for better maintainability and separation of concerns. This inline configuration is used for
+// development and demonstration purposes only.
 @OpenAPIDefinition(
-		info = @Info(
-				title = "Accounts microservice REST API Documentation",
-				description = "Example Accounts microservice REST API Documentation",
-				version = "v1",
-				contact = @Contact(
-						name = "Ripan Baidya",
-						email = "ripan.baidya@example.com",
-						url = "https://www.example.com"
-				),
-				license = @License(
-						name = "MIT license",
-						url = "https://opensource.org/licenses/MIT"
-				)
-		),
-		externalDocs = @ExternalDocumentation(
-				description = "Accounts microservice External Documentation",
-				url = "https://www.example.com/docs"
-		)
+        info = @Info(
+                title = "Accounts microservice REST API Documentation",
+                description = "EazyBank Accounts microservice REST API Documentation",
+                version = "v1",
+                contact = @Contact(
+                        name = "Madan Reddy",
+                        email = "tutor@eazybytes.com",
+                        url = "https://www.eazybytes.com"
+                ),
+                license = @License(
+                        name = "Apache 2.0",
+                        url = "https://www.eazybytes.com"
+                )
+        ),
+        externalDocs = @ExternalDocumentation(
+                description =  "EazyBank Accounts microservice REST API Documentation",
+                url = "https://www.eazybytes.com/swagger-ui.html"
+        )
 )
 public class AccountsApplication {
 

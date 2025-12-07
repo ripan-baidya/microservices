@@ -4,6 +4,7 @@ package com.example.accounts.mapper;
 import com.example.accounts.dto.CustomerDto;
 import com.example.accounts.entity.Customer;
 
+// Mapper class for converting between Customer entity and CustomerDto.
 public class CustomerMapper {
 
     public static CustomerDto mapToCustomerDto(Customer customer, CustomerDto customerDto) {

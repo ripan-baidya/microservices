@@ -4,7 +4,6 @@ import com.example.accounts.constants.AccountConstants;
 import com.example.accounts.dto.CustomerDto;
 import com.example.accounts.dto.ErrorResponseDto;
 import com.example.accounts.dto.ResponseDto;
-import com.example.accounts.entity.Customer;
 import com.example.accounts.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,11 +20,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
-@RequiredArgsConstructor
-@Validated // Add this annotation to enable method-level validation
-@Tag(
+// Note: Ordering annotations in spring boot is important for readability, not functionality.
+// Here, is the Widely followd production convention
+@RestController              // 1. Spring Stereotype
+@RequestMapping(             // 2. Request Mapping
+        value = "/api",
+        produces = MediaType.APPLICATION_JSON_VALUE
+)
+@Validated                   // 3. Validation or Cross cutting concerns
+@RequiredArgsConstructor     // 4. Lombok
+@Tag(                        // 5. Documentation
         name = "CRUD REST APIs for Accounts in Accounts Microservice",
         description = "CRUD REST APIs in Accounts Microservice to CREATE, UPDATE, FETCH AND DELETE account details"
 )
@@ -123,7 +127,7 @@ public class AccountController {
     })
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> updateAccountDetails(@Valid @RequestBody CustomerDto customerDto) {
-        boolean isUpdated = accountService.updateAccount(customerDto);
+        boolean isUpdated = accountService.updateCustomerAndAccountDetails(customerDto);
         if(isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)

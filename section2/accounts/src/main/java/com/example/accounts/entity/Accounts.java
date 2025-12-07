@@ -11,14 +11,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "accounts")
 @Getter @Setter @NoArgsConstructor
-public class Account extends BaseEntity {
+public class Accounts extends BaseEntity {
 
-    // Common field for Customer and Account entity
+    // Currently using customerId as a simple foreign key reference without JPA relationship mapping.
+    // Consider using @ManyToOne with Customer entity for proper relationship management and navigation.
     @Column(name = "customer_id")
     private Long customerId;
 
     // Note: We are not using any auto generated ID strategy here.
-    // We will write custome logic to generte account number(ID)
+    // We will write our own custome logic to generte account number(ID)
     @Id
     @Column(name = "account_number")
     private Long accountNumber;

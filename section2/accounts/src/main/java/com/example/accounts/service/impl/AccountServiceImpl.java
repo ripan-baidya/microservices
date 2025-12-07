@@ -3,7 +3,7 @@ package com.example.accounts.service.impl;
 import com.example.accounts.constants.AccountConstants;
 import com.example.accounts.dto.AccountDto;
 import com.example.accounts.dto.CustomerDto;
-import com.example.accounts.entity.Account;
+import com.example.accounts.entity.Accounts;
 import com.example.accounts.entity.Customer;
 import com.example.accounts.exception.CustomerAlreadyExistException;
 import com.example.accounts.exception.ResourceNotFoundException;
@@ -16,40 +16,39 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
 @Slf4j @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
+    // With lombok we dont need to write any Constructors or Setter to add depencencies,
+    // @RequiredArgsConstructor will automatically inject the dependencies for all final fields(classs/ interfaces)
     private final AccountRepository accountRepository;
 
     private final CustomerRepository customerRepository;
 
     @Override
     public void createAccount(CustomerDto customerDto) {
-        // convert customerDto to customer entity with the help of mapper
-        Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
-
-        // check if a customer already exists by his/her mobile number
-        customerRepository.findByMobileNumber(customer.getMobileNumber()).ifPresent(existingCustomer -> {
-            log.error("Customer with mobile number {} already exists", customer.getMobileNumber());
+        // Check if a customer already exists by his/her mobile number
+        customerRepository.findByMobileNumber(customerDto.getMobileNumber()).ifPresent(existingCustomer -> {
+            log.error("Customer with mobile number {} already exists", customerDto.getMobileNumber());
             throw new CustomerAlreadyExistException("Customer already exist with mobile number: "
-                    + customer.getMobileNumber());
+                    + customerDto.getMobileNumber());
         });
+
+        // Convert customerDto to customer entity with the help of mapper
+        Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
 
         // TODO: Implement JPA Auditing to automatically populate createdAt, createdBy, updatedAt, and updatedBy fields
         // customer.setCreatedAt(LocalDateTime.now());
         // customer.setCreatedBy("Anonymous");
 
-        // save customer entity to a database
+        // Save customer entity to a database
         Customer savedCustomer = customerRepository.save(customer);
 
-        // create an account entity and set customer id
+        // Create an account entity and set customer id
         accountRepository.save(createNewAccount(savedCustomer));
-
-
     }
 
     @Override
@@ -58,33 +57,33 @@ public class AccountServiceImpl implements AccountService {
                 () -> new ResourceNotFoundException("Customer", "mobile number", mobileNumber)
         );
         // We want to return account information along with customer details
-        Account account = accountRepository.findByCustomerId(existingCustomer.getCustomerId()).orElseThrow(
+        Accounts accounts = accountRepository.findByCustomerId(existingCustomer.getCustomerId()).orElseThrow(
                 () -> new ResourceNotFoundException("Account", "customer id", existingCustomer.getCustomerId().toString())
         );
 
         // convert customer to customer dto and set account information while converting the account
         // entity to account dto
         CustomerDto customerDto = CustomerMapper.mapToCustomerDto(existingCustomer, new CustomerDto());
-        customerDto.setAccount(AccountsMapper.mapToAccountDto(account, new AccountDto()));
+        customerDto.setAccount(AccountsMapper.mapToAccountDto(accounts, new AccountDto()));
 
         // return customer dto as response
         return customerDto;
     }
 
     @Override
-    public boolean updateAccount(CustomerDto customerDto) {
+    public boolean updateCustomerAndAccountDetails(CustomerDto customerDto) {
         boolean isUpdated = false;
         AccountDto accountDto = customerDto.getAccount();
         if (accountDto != null) {
             // find the account entity by account number
-            Account account = accountRepository.findById(accountDto.getAccountNumber()).orElseThrow(
+            Accounts accounts = accountRepository.findById(accountDto.getAccountNumber()).orElseThrow(
                     () -> new ResourceNotFoundException("Account", "AccountNumber", accountDto.getAccountNumber().toString())
             );
             // udpate the account info if found
-            AccountsMapper.mapToAccount(accountDto, account);
-            account = accountRepository.save(account);
+            AccountsMapper.mapToAccount(accountDto, accounts);
+            accounts = accountRepository.save(accounts);
 
-            Long customerId = account.getCustomerId();
+            Long customerId = accounts.getCustomerId();
             Customer customer = customerRepository.findById(customerId).orElseThrow(
                     () -> new ResourceNotFoundException("Customer", "CustomerID", customerId.toString())
             );
@@ -111,21 +110,22 @@ public class AccountServiceImpl implements AccountService {
 
 
     // method to create a new account for customer
-    private Account createNewAccount(Customer customer) {
-        Account account = new Account();
-        account.setCustomerId(customer.getCustomerId());
+    private Accounts createNewAccount(Customer customer) {
+        Accounts accounts = new Accounts();
 
-        // generate a random account number
+        accounts.setCustomerId(customer.getCustomerId());
+
+        // Generate a random 10 digit account number, This will work as primary key for account entity
         long randomAccountNumber = 1000000000L + new Random().nextLong(900000000L);
-        account.setAccountNumber(randomAccountNumber);
+        accounts.setAccountNumber(randomAccountNumber);
 
-        account.setAccountType(AccountConstants.SAVINGS);
-        account.setBranchAddress(AccountConstants.ADDRESS);
+        accounts.setAccountType(AccountConstants.SAVINGS);
+        accounts.setBranchAddress(AccountConstants.ADDRESS);
 
         // TODO: Implement JPA Auditing to automatically populate createdAt, createdBy, updatedAt, and updatedBy fields
         // account.setCreatedAt(LocalDateTime.now());
         // account.setCreatedBy("Anonymous");
 
-        return account;
+        return accounts;
     }
 }

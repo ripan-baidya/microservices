@@ -31,24 +31,24 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final ErrorPageRegistrar errorPageRegistrar;
-
-    public GlobalExceptionHandler(ErrorPageRegistrar errorPageRegistrar) {
-        this.errorPageRegistrar = errorPageRegistrar;
-    }
-
     // Note: We have overridden the handleMethodArgumentNotValid method to customize the response body.
     // The implementation will depend on business requirements.
+    // This will handle all kinds of validation errors in our application
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> validationErrors = new HashMap<>();
         List<ObjectError> validationErrorList = ex.getBindingResult().getAllErrors();
+
+        // Iterate through the list of validation errors and populate the map
         validationErrorList.forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
+            String fieldName = error instanceof FieldError
+                    ? ((FieldError) error).getField()
+                    : "global";
             String errorMessage = error.getDefaultMessage();
             validationErrors.put(fieldName, errorMessage);
         });
+
         return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
     }
 

@@ -1,22 +1,22 @@
 package com.example.accounts.mapper;
 
 import com.example.accounts.dto.AccountDto;
-import com.example.accounts.entity.Account;
+import com.example.accounts.entity.Accounts;
 
-// mapper class for converting between Account entity and AccountDto.
+// Mapper class for converting between Account entity and AccountDto.
 public class AccountsMapper {
 
-    public static AccountDto mapToAccountDto(Account account, AccountDto accountDto) {
-        accountDto.setAccountNumber(account.getAccountNumber());
-        accountDto.setAccountType(account.getAccountType());
-        accountDto.setBranchAddress(account.getBranchAddress());
+    public static AccountDto mapToAccountDto(Accounts accounts, AccountDto accountDto) {
+        accountDto.setAccountNumber(accounts.getAccountNumber());
+        accountDto.setAccountType(accounts.getAccountType());
+        accountDto.setBranchAddress(accounts.getBranchAddress());
         return accountDto;
     }
 
-    public static Account mapToAccount(AccountDto accountDto, Account account) {
-        account.setAccountNumber(accountDto.getAccountNumber());
-        account.setAccountType(accountDto.getAccountType());
-        account.setBranchAddress(accountDto.getBranchAddress());
-        return account;
+    public static Accounts mapToAccount(AccountDto accountDto, Accounts accounts) {
+        accounts.setAccountNumber(accountDto.getAccountNumber());
+        accounts.setAccountType(accountDto.getAccountType());
+        accounts.setBranchAddress(accountDto.getBranchAddress());
+        return accounts;
     }
 }
